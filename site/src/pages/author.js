@@ -1,10 +1,12 @@
-import React from "react"
+import React, {useContext} from "react"
 import { graphql } from "gatsby"
 import { stringify } from "qs"
 import { ImageElement } from "@kentico/gatsby-kontent-components"
 import { ImageUrlBuilder } from "@kentico/kontent-delivery"
+import { AppContext } from "../context"
 
 const Author = ({ data }) => {
+  const { size, height } = useContext(AppContext)
   if (!data.author.elements.avatar_image.value.length) {
     return <pre>Author avatar note set.</pre>
   }
@@ -28,8 +30,7 @@ const Author = ({ data }) => {
   const deliverySDKTransformedUrl = new ImageUrlBuilder(avatar.url)
     .withRectangleCrop(...rectSelection)
     .withWidth(imageQuery.w)
-
-  return (
+  if(size < 768) {return (
     <>
       <header>
         <h1>{data.author.elements.name.value}</h1>
@@ -100,7 +101,7 @@ const Author = ({ data }) => {
         </section>
       </article>
     </>
-  )
+  )} else return <>hello world </>
 }
 
 export const query = graphql`
