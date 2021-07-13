@@ -1,6 +1,7 @@
 import React, { useContext } from "react"
 import { graphql } from "gatsby"
 import { stringify } from "qs"
+import { GatsbyImage } from "gatsby-plugin-image"
 import { ImageElement } from "@kentico/gatsby-kontent-components"
 import { ImageUrlBuilder } from "@kentico/kontent-delivery"
 import { AppContext } from "../context"
@@ -15,7 +16,7 @@ const Author = ({ data }) => {
   const showcaseWidth = 250
 
   const avatar = data.author.elements.avatar_image.value[0]
-
+  const { gatsbyImage } = data
   const rectSelection = [
     160,
     70,
@@ -31,7 +32,7 @@ const Author = ({ data }) => {
   const deliverySDKTransformedUrl = new ImageUrlBuilder(avatar.url)
     .withRectangleCrop(...rectSelection)
     .withWidth(imageQuery.w)
-  console.log(size)
+
   if (size && size > 768) {
     return (
       <>
@@ -45,6 +46,10 @@ const Author = ({ data }) => {
             height={200}
             backgroundColor="#bbbbbb"
             alt={avatar.description}
+          />
+          <GatsbyImage
+            image={gatsbyImage.nodes[0].childImageSharp.gatsbyImageData}
+            layout={"fullWidth"}
           />
           <p>
             This uses the
@@ -108,7 +113,7 @@ const Author = ({ data }) => {
         </article>
       </>
     )
-  } else return <>hello world </>
+  } else return <>hello world just needed to return something else here. </>
 }
 
 export const query = graphql`
@@ -126,6 +131,21 @@ export const query = graphql`
             description
             type
           }
+        }
+      }
+    }
+    gatsbyImage: allFile(
+      filter: { relativePath: { eq: "assets/images/radek.webp" } }
+    ) {
+      nodes {
+        childImageSharp {
+          gatsbyImageData(
+            formats: WEBP
+            quality: 80
+            width: 800
+            height: 200
+            layout: CONSTRAINED
+          )
         }
       }
     }
